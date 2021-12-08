@@ -14,17 +14,17 @@ board:
     connector can measure the power consumption instantly, which is essential for
     the prototype evaluation. The M2354 target board also has Wi-Fi connectivity on
     board and LCD display panel (COM/SEG) for quick development. In addition, there
-    is an attached on-board debugger and programmer ¡§Nu-Link2-Me¡¨. The Nu-Link2-Me
+    is an attached on-board debugger and programmer â€œNu-Link2-Meâ€. The Nu-Link2-Me
     supports on-chip debugging, online and offline ICP programming via SWD interface.
     The Nu-Link2-Me supports virtual COM (VCOM) port for printing debug messages on
     PC. Besides, the programming status could be shown on the built-in LEDs. Lastly,
     the Nu-Link2-Me could be detached from the evaluation board and become a stand-alone
     mass production programmer.
-  description_zh: NuMaker-M2354 ¥Ñ¨â³¡¤À²Õ¦¨¡A±Ä¥Î NuMicroR M2354KJFAE ·L±±¨î¾¹ªº¥D±±ªO¡A»P Nu-Link2-Me
-    °£¿ù¿N¿ı¾¹¡C¨Ï¥ÎªÌ¥u»İ¨Ï¥Î¦¹¶}µoªO´N¥i¥H¶}©l¶i¦æ¶}µo¡B¿N¿ı¨ÃÅçÃÒÀ³¥Îµ{§Ç¡CNuMaker-2354¥i§@¬°¦w¥ş±M®×µû¦ô¡B¶}µo¡BÅçÃÒ¥H¤Î¥\¯ÓºÊ±±ªº¥­¥x¡CNuMaker-M2354
-    ¥­¥x±a¦³ NuMicroR M2354KJFAE ·L±±¨î¾¹¥H¤Î§¹¾ãªº¸}¦ìÂX®i¤¶­±¡A´£¨Ñ¬Û®e©óArduino UNOªº¤¶­±¡A¤è«K·f°t¦U¦¡©PÃä³]³Æ©ÎArduino
-    ¼Ò²Õ¡A¸Ó¥­¥x´£¨Ñ¦hºØªº¹q·½¨ÑÀ³³]­p¡AÅı±M®×ªº¶}µo§ó¥[ÆF¬¡¡CNuMaker-M2354 ¥­¥x¨ã³Æ¹q¬y¶q´ú¤¶­±¥i¥HÀH®ÉºÊ±±¥\¯Ó¡A¨ó§U±M®×¶}µo»Pµû¦ô¡CNuMaker-M2354
-    ÁÙ±a¦³ Wi-Fi ¼Ò²Õ ¥H¤Î¤ä´© COM/SEG LCD¡AÅı¨Ï¥ÎªÌ¯à§Ö³t¶i¦æ±M®×¶}µo¡CNuMaker-M2354ªº¥t¤@³¡¤À¬°Nu-Link2-Me°£¿ù¿N¿ı¾¹¡CNu-Link2-Me¥i³z¹LSWD¤¶­±¹ï·s­ğ·L±±¨î¾¹¶i¦æ¦b½uICP¿N¿ı»P°£¿ù¡A¤]¥i¥H¶i¦æÂ÷½uICP¿N¿ı¡A¿N¿ıªºª¬ºA·|Åã¥Ü¦bª¬ºALED¤W¡CNu-Link2-Me¤]¤ä´©µêÀÀ¦ê¤f¡]VCOM¡^¥\¯à¡A¥i¿é¥X°T®§¦Ü²×ºİ¾÷µøµ¡¡CNu-Link2-MeÁÙ¥i¥H»P¶}µoªO¤ÀÂ÷¡A¦¨¬°¿W¥ßªº§å¦¸¥Í²£¿N¿ı¾¹¡C
+  description_zh: NuMaker-M2354 ç”±å…©éƒ¨åˆ†çµ„æˆï¼Œæ¡ç”¨ NuMicroR M2354KJFAE å¾®æ§åˆ¶å™¨çš„ä¸»æ§æ¿ï¼Œèˆ‡ Nu-Link2-Me
+    é™¤éŒ¯ç‡’éŒ„å™¨ã€‚ä½¿ç”¨è€…åªéœ€ä½¿ç”¨æ­¤é–‹ç™¼æ¿å°±å¯ä»¥é–‹å§‹é€²è¡Œé–‹ç™¼ã€ç‡’éŒ„ä¸¦é©—è­‰æ‡‰ç”¨ç¨‹åºã€‚NuMaker-2354å¯ä½œç‚ºå®‰å…¨å°ˆæ¡ˆè©•ä¼°ã€é–‹ç™¼ã€é©—è­‰ä»¥åŠåŠŸè€—ç›£æ§çš„å¹³å°ã€‚NuMaker-M2354
+    å¹³å°å¸¶æœ‰ NuMicroR M2354KJFAE å¾®æ§åˆ¶å™¨ä»¥åŠå®Œæ•´çš„è…³ä½æ“´å±•ä»‹é¢ï¼Œæä¾›ç›¸å®¹æ–¼Arduino UNOçš„ä»‹é¢ï¼Œæ–¹ä¾¿æ­é…å„å¼å‘¨é‚Šè¨­å‚™æˆ–Arduino
+    æ¨¡çµ„ï¼Œè©²å¹³å°æä¾›å¤šç¨®çš„é›»æºä¾›æ‡‰è¨­è¨ˆï¼Œè®“å°ˆæ¡ˆçš„é–‹ç™¼æ›´åŠ éˆæ´»ã€‚NuMaker-M2354 å¹³å°å…·å‚™é›»æµé‡æ¸¬ä»‹é¢å¯ä»¥éš¨æ™‚ç›£æ§åŠŸè€—ï¼Œå”åŠ©å°ˆæ¡ˆé–‹ç™¼èˆ‡è©•ä¼°ã€‚NuMaker-M2354
+    é‚„å¸¶æœ‰ Wi-Fi æ¨¡çµ„ ä»¥åŠæ”¯æ´ COM/SEG LCDï¼Œè®“ä½¿ç”¨è€…èƒ½å¿«é€Ÿé€²è¡Œå°ˆæ¡ˆé–‹ç™¼ã€‚NuMaker-M2354çš„å¦ä¸€éƒ¨åˆ†ç‚ºNu-Link2-Meé™¤éŒ¯ç‡’éŒ„å™¨ã€‚Nu-Link2-Meå¯é€éSWDä»‹é¢å°æ–°å”å¾®æ§åˆ¶å™¨é€²è¡Œåœ¨ç·šICPç‡’éŒ„èˆ‡é™¤éŒ¯ï¼Œä¹Ÿå¯ä»¥é€²è¡Œé›¢ç·šICPç‡’éŒ„ï¼Œç‡’éŒ„çš„ç‹€æ…‹æœƒé¡¯ç¤ºåœ¨ç‹€æ…‹LEDä¸Šã€‚Nu-Link2-Meä¹Ÿæ”¯æ´è™›æ“¬ä¸²å£ï¼ˆVCOMï¼‰åŠŸèƒ½ï¼Œå¯è¼¸å‡ºè¨Šæ¯è‡³çµ‚ç«¯æ©Ÿè¦–çª—ã€‚Nu-Link2-Meé‚„å¯ä»¥èˆ‡é–‹ç™¼æ¿åˆ†é›¢ï¼Œæˆç‚ºç¨ç«‹çš„æ‰¹æ¬¡ç”Ÿç”¢ç‡’éŒ„å™¨ã€‚
   emulator_machine: ''
   large_image: documents/images/large.png
   name: NUMAKER-M2354
@@ -56,10 +56,10 @@ features:
 - MicroSD Card Slot
 - Nu-Link2-Me ICE
 features_zh:
-- Arduino UNO ¬Û®e¤¶­±
-- COM/SEG LCD ¤¶­±
-- 'Wi-Fi ¼Ò²Õ: ESP12-F'
-- MicroSD Card ¥d¼Ñ
+- Arduino UNO ç›¸å®¹ä»‹é¢
+- COM/SEG LCD ä»‹é¢
+- 'Wi-Fi æ¨¡çµ„: ESP12-F'
+- MicroSD Card å¡æ§½
 - 'Nu-Link2-Me '
 pkg_type: Board_Support_Packages
 pkg_vendor: Wayne
