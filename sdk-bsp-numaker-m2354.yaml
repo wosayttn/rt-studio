@@ -7,24 +7,9 @@ board:
     microcontrollers. The NuMaker-M2354 consists of two parts, a M2354 target board
     and an on-board Nu-Link2-Me debugger and programmer. The NuMaker-M2354 is designed
     for secure evaluation, prototype development and validation with power consumption
-    monitoring function.The M2354 target board is based on NuMicro M2354KJFAE. For
-    the development flexibility, the M2354 target board provides the extension connectors
-    of M2354KJFAE, the Arduino UNO compatible headers and is able to adopt multiple
-    power supply by external power connectors. Furthermore, the Nuvoton-designed ammeter
-    connector can measure the power consumption instantly, which is essential for
-    the prototype evaluation. The M2354 target board also has Wi-Fi connectivity on
-    board and LCD display panel (COM/SEG) for quick development. In addition, there
-    is an attached on-board debugger and programmer “Nu-Link2-Me”. The Nu-Link2-Me
-    supports on-chip debugging, online and offline ICP programming via SWD interface.
-    The Nu-Link2-Me supports virtual COM (VCOM) port for printing debug messages on
-    PC. Besides, the programming status could be shown on the built-in LEDs. Lastly,
-    the Nu-Link2-Me could be detached from the evaluation board and become a stand-alone
-    mass production programmer.
+    monitoring function.
   description_zh: NuMaker-M2354 由兩部分組成，採用 NuMicroR M2354KJFAE 微控制器的主控板，與 Nu-Link2-Me
-    除錯燒錄器。使用者只需使用此開發板就可以開始進行開發、燒錄並驗證應用程序。NuMaker-2354可作為安全專案評估、開發、驗證以及功耗監控的平台。NuMaker-M2354
-    平台帶有 NuMicroR M2354KJFAE 微控制器以及完整的腳位擴展介面，提供相容於Arduino UNO的介面，方便搭配各式周邊設備或Arduino
-    模組，該平台提供多種的電源供應設計，讓專案的開發更加靈活。NuMaker-M2354 平台具備電流量測介面可以隨時監控功耗，協助專案開發與評估。NuMaker-M2354
-    還帶有 Wi-Fi 模組 以及支援 COM/SEG LCD，讓使用者能快速進行專案開發。NuMaker-M2354的另一部分為Nu-Link2-Me除錯燒錄器。Nu-Link2-Me可透過SWD介面對新唐微控制器進行在線ICP燒錄與除錯，也可以進行離線ICP燒錄，燒錄的狀態會顯示在狀態LED上。Nu-Link2-Me也支援虛擬串口（VCOM）功能，可輸出訊息至終端機視窗。Nu-Link2-Me還可以與開發板分離，成為獨立的批次生產燒錄器。
+    除錯燒錄器。使用者只需使用此開發板就可以開始進行開發、燒錄並驗證應用程序。NuMaker-2354可作為安全專案評估、開發、驗證以及功耗監控的平台。
   emulator_machine: ''
   large_image: documents/images/large.png
   name: NUMAKER-M2354
@@ -37,25 +22,29 @@ board:
   version: v1.1
 chip:
   chip_name: M2354KJFAE
-  clock_source: HSE
+  clock_source: HXT
   device_vendor: Nuvoton
   family_name: NuMicro
-  rx_name: PA10
+  rx_name: PA6
   series_name: M2354
-  source_freq: '8000000'
+  source_freq: '12000000'
   sub_series_name: M2354K
-  target_freq: '240000000'
-  tx_name: PA9
-  uart_name: UART1
+  target_freq: '96000000'
+  tx_name: PA7
+  uart_name: UART0
 docs: []
 example_projects: []
 features:
+- CPU frequency: 96 MHz
+- Storage: 1MB Dual Bank FLASH ，256kB RAM
 - Arduino UNO Compatible interface
 - COM/SEG LCD Interface
 - 'Wi-Fi Module: ESP12-F'
 - MicroSD Card Slot
 - Nu-Link2-Me ICE
 features_zh:
+- CPU frequency: 96 MHz
+- Storage: 1MB Dual Bank FLASH ，256kB RAM
 - Arduino UNO 相容介面
 - COM/SEG LCD 介面
 - 'Wi-Fi 模組: ESP12-F'
