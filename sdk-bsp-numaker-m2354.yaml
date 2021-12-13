@@ -99,7 +99,7 @@ template_projects:
     - LICENSE
   - package_type: ToolChain_Support_Packages
     package_name: GNU_Tools_for_ARM_Embedded_Processors
-    package_vendor: ''
+    package_vendor: 'ARM'
     package_version: 10.2.1
     source_path_offset: ''
     target_path_offset: ''
