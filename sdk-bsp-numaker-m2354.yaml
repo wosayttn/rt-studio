@@ -2,7 +2,7 @@ board:
   buy_url_cn: https://direct.nuvoton.com/tw/numaker-m2354
   buy_url_global: https://direct.nuvoton.com/tw/numaker-m2354
   debug_interface: SWD
-  debugger: DAP-LINK
+  debugger: NU-LINK
   description_en: The NuMaker-M2354 is an evaluation board for Nuvoton NuMicro M2354
     microcontrollers. The NuMaker-M2354 consists of two parts, a M2354 target board
     and an on-board Nu-Link2-Me debugger and programmer. The NuMaker-M2354 is designed
