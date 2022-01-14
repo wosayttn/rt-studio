@@ -39,17 +39,17 @@ features:
 - Storage: 1MB Dual Bank FLASH ，256kB RAM
 - Arduino UNO Compatible interface
 - COM/SEG LCD Interface
-- 'Wi-Fi Module: ESP12-F'
+- Wi-Fi Module: ESP12-F
 - MicroSD Card Slot
 - Nu-Link2-Me ICE
 features_zh:
 - CPU frequency: 96 MHz
-- Storage: 1MB Dual Bank FLASH ，256kB RAM
+- Storage: 1MB Dual Bank FLASH, 256kB RAM
 - Arduino UNO 相容介面
 - COM/SEG LCD 介面
-- 'Wi-Fi 模組: ESP12-F'
+- Wi-Fi 模組: ESP12-F
 - MicroSD Card 卡槽
-- 'Nu-Link2-Me '
+- Nu-Link2-Me
 pkg_type: Board_Support_Packages
 pkg_vendor: Wayne
 pkg_version: 1.0.0
@@ -67,7 +67,6 @@ template_projects:
     - applications
     - makefile.targets
     - board
-    - packages
     - README.md
     - cconfig.h
     - rtconfig.h
