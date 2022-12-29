@@ -18,7 +18,7 @@ board:
   sale_contact_cn: https://www.nuvoton.com
   sale_contact_global: https://www.nuvoton.com
   small_image: documents/images/small.png
-  vendor: Nuvoton technology corporation
+  vendor: Nuvoton
   version: v1.1
 chip:
   chip_name: M2354KJFAE
