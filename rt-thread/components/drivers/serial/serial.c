@@ -1227,6 +1227,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 #endif /* RT_USING_POSIX_STDIO */
         default :
             /* control device */
+				 rt_kprintf("adfadfasdfadfasdf\n");
             ret = serial->ops->control(serial, cmd, args);
             break;
     }

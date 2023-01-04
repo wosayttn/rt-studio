@@ -10,6 +10,9 @@
  * As a drawback, more memory is consumed for multiple parallel threads being potentially
  * used at the same period of time.
  */
+#include "rtthread.h"
+#include "rtdevice.h"
+
 #include "netconn_server.h"
 #include "lwesp/lwesp_netconn.h"
 #include "lwesp/lwesp.h"
@@ -105,7 +108,7 @@ netconn_server_thread(void const *arg)
                 res = lwesp_netconn_accept(server, &client);
                 if (res == lwespOK)
                 {
-                    printf("Netconn new client connected. Starting new thread...\r\n");
+                    //printf("Netconn new client connected. Starting new thread...\r\n");
                     /*
                      * Start new thread for this request.
                      *
@@ -114,7 +117,7 @@ netconn_server_thread(void const *arg)
                      */
                     if (lwesp_sys_thread_create(NULL, "client", (lwesp_sys_thread_fn)netconn_server_processing_thread, client, LWESP_SYS_THREAD_SS, LWESP_SYS_THREAD_PRIO))
                     {
-                        printf("Netconn client thread created\r\n");
+                        //printf("Netconn client thread created\r\n");
                     }
                     else
                     {
@@ -159,7 +162,7 @@ netconn_server_processing_thread(void *const arg)
     lwespr_t res;
     char strt[64];
 
-    printf("A new connection accepted!\r\n");   /* Print simple message */
+    //printf("A new connection accepted!\r\n");   /* Print simple message */
 
     do
     {
@@ -173,7 +176,7 @@ netconn_server_processing_thread(void *const arg)
 
         if (res == lwespOK)
         {
-            printf("Netconn data received, %d bytes\r\n", (int)lwesp_pbuf_length(pbuf, 1));
+            //printf("Netconn data received, %d bytes\r\n", (int)lwesp_pbuf_length(pbuf, 1));
             /* Check reception of all header bytes */
             if (p == NULL)
             {
@@ -194,7 +197,7 @@ netconn_server_processing_thread(void *const arg)
                     uint32_t now;
                     time_t timestamp;
 
-                    printf("Main page request\r\n");
+                    //printf("Main page request\r\n");
                     now = lwesp_sys_now();      /* Get current time */
                     get_timestamp(&timestamp);
                     snprintf(strt, sizeof(strt), "%u ms; %d secs, system time: %d secs", (unsigned)now, (unsigned)(now / 1000), timestamp);
@@ -204,12 +207,12 @@ netconn_server_processing_thread(void *const arg)
                 }
                 else if (lwesp_pbuf_strfind(pbuf, "GET /style.css ", 0) != LWESP_SIZET_MAX)
                 {
-                    printf("Style page request\r\n");
+                    //printf("Style page request\r\n");
                     lwesp_netconn_write(client, rlwesp_data_style, sizeof(rlwesp_data_style) - 1);
                 }
                 else
                 {
-                    printf("404 error not found\r\n");
+                    //printf("404 error not found\r\n");
                     lwesp_netconn_write(client, rlwesp_error_404, sizeof(rlwesp_error_404) - 1);
                 }
                 lwesp_netconn_close(client);    /* Close netconn connection */

@@ -1,8 +1,11 @@
+#include "rtthread.h"
+#include "rtdevice.h"
 #include "lwesp.h"
 #include "station_manager.h"
 #include "netconn_server.h"
+#include "lwesp/lwesp_mdns.h"
 
-#define utils_printf   printf
+#define utils_printf   rt_kprintf
 #define DEF_PRODUCT    "thermostat"
 
 /**
@@ -56,10 +59,11 @@ utils_print_mac(const char *str_b, const lwesp_mac_t *mac, const char *str_a)
     {
         utils_printf("%s", str_b);
     }
+
     utils_printf("%02X:%02X:%02X:%02X:%02X:%02X\r\n",
                  (unsigned)mac->mac[0], (unsigned)mac->mac[1], (unsigned)mac->mac[2],
-                 (unsigned)mac->mac[3], (unsigned)mac->mac[4], (unsigned)mac->mac[5]
-                );
+                 (unsigned)mac->mac[3], (unsigned)mac->mac[4], (unsigned)mac->mac[5]);
+
     if (str_a != NULL)
     {
         utils_printf("%s", str_a);
@@ -94,6 +98,7 @@ static lwespr_t lwesp_callback_func(lwesp_evt_t *evt)
         utils_printf("LWESP Library initialized!\r\n");
         break;
     }
+
     case LWESP_EVT_RESET_DETECTED:
     {
         utils_printf("Device reset detected!\r\n");
@@ -132,27 +137,27 @@ static lwespr_t lwesp_callback_func(lwesp_evt_t *evt)
 }
 
 /* SNTP query callback function. */
-static lwespr_t lwesp_snftp_cbf(lwespr_t res, void *arg)
+static void lwesp_snftp_cbf(lwespr_t res, void *arg)
 {
-    lwesp_datetime_t *dt = (lwesp_datetime_t *)arg;
-
     switch (res)
     {
     case lwespOK:
     {
         time_t timestamp;
+        lwesp_datetime_t *dt = (lwesp_datetime_t *)arg;
+			
         RT_ASSERT(dt);
 
-        set_date(dt->year, dt->month, dt->date);
-        set_time(dt->hours, dt->minutes, dt->seconds);
+        set_date((rt_uint32_t)dt->year, (rt_uint32_t)dt->month, (rt_uint32_t)dt->date);
+        set_time((rt_uint32_t)dt->hours, (rt_uint32_t)dt->minutes, (rt_uint32_t)dt->seconds);
         get_timestamp(&timestamp);
 
         if (timestamp > 1000)
         {
-            printf("SYSTIME:%d, SNTP: %02d-%02d-%02d %02d:%02d:%02d\r\n",
-                   timestamp,
-                   (int)dt->year, (int)dt->month, (int)dt->date,
-                   (int)dt->hours, (int)dt->minutes, (int)dt->seconds);
+					   utils_printf("SYSTIME: %d, SNTP: %02d-%02d-%02d %02d:%02d:%02d\n",
+                   (rt_uint32_t)timestamp,
+                   (rt_uint32_t)dt->year, (rt_uint32_t)dt->month, (rt_uint32_t)dt->date,
+                   (rt_uint32_t)dt->hours, (rt_uint32_t)dt->minutes, (rt_uint32_t)dt->seconds);
         }
     }
     break;
@@ -160,8 +165,6 @@ static lwespr_t lwesp_snftp_cbf(lwespr_t res, void *arg)
     default:
         break;
     }
-
-    return lwespOK;
 }
 
 static void lwesp_netif_worker(void *pvParameter)
@@ -174,11 +177,36 @@ static void lwesp_netif_worker(void *pvParameter)
     /* Initialize LWESP with default callback function */
     if (lwesp_init(lwesp_callback_func, 1) != lwespOK)
     {
-        printf("Cannot initialize LwESP!\r\n");
+        utils_printf("Cannot initialize LwESP!\r\n");
         goto exit_lwesp_netif_worker;
     }
     lwesp_evt_register(lwesp_callback_func);
 
+
+#if 1
+		#define DEF_SPEED_UP	(LWESP_CFG_AT_PORT_BAUDRATE * 4)
+		/* Set baudrate to DEF_SPEED_UP and enable flow-control function. */
+		if ( lwesp_set_at_baudrate(DEF_SPEED_UP, NULL, NULL, 1)  != lwespOK ) 
+		{
+			utils_printf("Cannot set baudrate to %d!\r\n", DEF_SPEED_UP);
+			goto exit_lwesp_netif_worker;
+		}
+		else
+		{
+			  /* re-configuration UART baudrate. */
+				extern uint8_t lwesp_serial_change_baudrate(uint32_t baudrate);
+			  if (lwesp_serial_change_baudrate(DEF_SPEED_UP))
+				{
+					utils_printf("Reset baudrate to %d!\r\n", DEF_SPEED_UP);				
+				}
+				else
+				{
+					utils_printf("Cannot reset baudrate to %d!\r\n", DEF_SPEED_UP);
+					goto exit_lwesp_netif_worker;
+				}					
+		}
+#endif		
+		
     if ((res = lwesp_ap_getmac(&ap_mac, RT_NULL, RT_NULL, 1)) == lwespOK)
     {
         utils_print_mac("SofAP MAC address: ", &ap_mac, "\r\n");
@@ -186,17 +214,17 @@ static void lwesp_netif_worker(void *pvParameter)
     }
     else
     {
-        printf("Failed to get ap mac address\r\n", (int)res);
+        utils_printf("Failed to get ap mac address\r\n", (int)res);
         goto exit_lwesp_netif_worker;
     }
 
     if ((res = lwesp_set_wifi_mode(LWESP_MODE_STA_AP, NULL, NULL, 1)) == lwespOK)
     {
-        printf("ESP set to station mode\r\n");
+        utils_printf("ESP set to station mode\r\n");
     }
     else
     {
-        printf("Problems setting ESP to station mode: %d\r\n", (int)res);
+        utils_printf("Problems setting ESP to station mode: %d\r\n", (int)res);
         goto exit_lwesp_netif_worker;
     }
 
@@ -213,11 +241,11 @@ static void lwesp_netif_worker(void *pvParameter)
     res = lwesp_ap_set_config(szTMP, "12345678", 10, LWESP_ECN_WPA2_PSK, 1, 0, RT_NULL, RT_NULL, 1);
     if (res == lwespOK)
     {
-        printf("Access point configured! %s \r\n", szTMP);
+        utils_printf("Access point configured! %s \r\n", szTMP);
     }
     else
     {
-        printf("Cannot configure access point!\r\n");
+        utils_printf("Cannot configure access point!\r\n");
         goto exit_lwesp_netif_worker;
     }
 
@@ -225,23 +253,23 @@ static void lwesp_netif_worker(void *pvParameter)
     res = lwesp_sntp_set_config(1, 8, "tock.stdtime.gov.tw", "time.stdtime.gov.tw", NULL, NULL, NULL, 1);
     if (res == lwespOK)
     {
-        printf("sntp configured!\r\n");
+        utils_printf("sntp configured!\r\n");
     }
     else
     {
-        printf("Cannot configure sntp!\r\n");
+        utils_printf("Cannot configure sntp!\r\n");
     }
 
     /* mdns */
     res = lwesp_mdns_set_config(1, szTMP, "_"DEF_PRODUCT, 80, RT_NULL, RT_NULL, 1);
     if (res == lwespOK)
     {
-        printf("mdns configured! mdns: %s.local\r\n", szTMP);
-        printf("## You can execute 'ping %s.local' using window command-line.\r\n", szTMP);
+        utils_printf("mdns configured! mdns: %s.local\r\n", szTMP);
+        utils_printf("## You can execute 'ping %s.local' using window command-line.\r\n", szTMP);
     }
     else
     {
-        printf("Cannot configure mdns!\r\n");
+        utils_printf("Cannot configure mdns!\r\n");
     }
 
     /* The rest is handled in event function */
@@ -254,11 +282,10 @@ static void lwesp_netif_worker(void *pvParameter)
      */
     lwesp_sntp_gettime(&dt, lwesp_snftp_cbf, &dt, 0);
     lwesp_delay(5000);
-    lwesp_sntp_gettime(&dt, lwesp_snftp_cbf, &dt, 0);
     while (1)
     {
-        lwesp_delay(60000);
         lwesp_sntp_gettime(&dt, lwesp_snftp_cbf, &dt, 0);
+        lwesp_delay(60000);
     }
 
 exit_lwesp_netif_worker:

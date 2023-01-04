@@ -171,24 +171,33 @@ uint32_t
 lwesp_sys_mbox_put(lwesp_sys_mbox_t *b, void *m)
 {
     rtthread_mbox_t mb;
-    uint32_t t = rt_tick_get();
+    uint32_t t;
 
+		t = rt_tick_get();
     mb.d = m;
-    rt_mq_send(*b, &mb, sizeof(rtthread_mbox_t));
-    return rt_tick_get() - t;
+
+    if ( rt_mq_send(*b, &mb, sizeof(rtthread_mbox_t)) == RT_EOK )
+		{
+        return rt_tick_get() - t;
+		}
+
+		return LWESP_SYS_TIMEOUT;
 }
 
 uint32_t
 lwesp_sys_mbox_get(lwesp_sys_mbox_t *b, void **m, uint32_t timeout)
 {
     rtthread_mbox_t mb;
-    uint32_t t = rt_tick_get();
+    uint32_t t;
+
+    t	= rt_tick_get();
 
     if (rt_mq_recv(*b, &mb, sizeof(rtthread_mbox_t), !timeout ? LWESP_SYS_TIMEOUT : RT_TICK_PER_SECOND * timeout / 1000) == RT_EOK)
     {
         *m = mb.d;
         return (rt_tick_get() - t) * RT_TICK_PER_SECOND;
     }
+
     return LWESP_SYS_TIMEOUT;
 }
 

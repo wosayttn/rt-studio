@@ -359,22 +359,20 @@ static void nu_uart_isr(nu_uart_t serial)
 /**
  * Configure uart port
  */
-static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+static rt_err_t nu_uart_resetline(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     rt_err_t ret = RT_EOK;
+
+    RT_ASSERT(serial);
+    RT_ASSERT(cfg);
+	
     uint32_t uart_word_len = 0;
     uint32_t uart_stop_bit = 0;
     uint32_t uart_parity = 0;
 
-    RT_ASSERT(serial);
-    RT_ASSERT(cfg);
-
-    /* Check baudrate */
-    RT_ASSERT(cfg->baud_rate != 0);
-
     /* Get base address of uart register */
     UART_T *uart_base = ((nu_uart_t)serial)->uart_base;
-
+	
     /* Check word len */
     switch (cfg->data_bits)
     {
@@ -397,7 +395,7 @@ static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial
     default:
         rt_kprintf("Unsupported data length\n");
         ret = RT_EINVAL;
-        goto exit_nu_uart_configure;
+        goto exit_nu_uart_resetline;
     }
 
     /* Check stop bit */
@@ -414,7 +412,7 @@ static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial
     default:
         rt_kprintf("Unsupported stop bit\n");
         ret = RT_EINVAL;
-        goto exit_nu_uart_configure;
+        goto exit_nu_uart_resetline;
     }
 
     /* Check parity */
@@ -435,8 +433,30 @@ static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial
     default:
         rt_kprintf("Unsupported parity\n");
         ret = RT_EINVAL;
-        goto exit_nu_uart_configure;
+        goto exit_nu_uart_resetline;
     }
+
+    /* Set line configuration. */
+    UART_SetLineConfig(uart_base, cfg->baud_rate, uart_word_len, uart_parity, uart_stop_bit);
+
+exit_nu_uart_resetline:
+
+    return -(ret);
+}
+
+static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+{
+    rt_err_t ret = RT_EOK;
+
+    RT_ASSERT(serial);
+    RT_ASSERT(cfg);
+
+    /* Check baudrate */
+    RT_ASSERT(cfg->baud_rate != 0);
+
+    /* Get base address of uart register */
+    UART_T *uart_base = ((nu_uart_t)serial)->uart_base;
+
 
     /* Reset this module */
     SYS_ResetModule(((nu_uart_t)serial)->uart_rst);
@@ -444,9 +464,8 @@ static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial
     /* Open Uart and set UART Baudrate */
     UART_Open(uart_base, cfg->baud_rate);
 
-    /* Set line configuration. */
-    UART_SetLineConfig(uart_base, 0, uart_word_len, uart_parity, uart_stop_bit);
-
+		nu_uart_resetline(serial, cfg);
+	
     /* Enable NVIC interrupt. */
     NVIC_EnableIRQ(((nu_uart_t)serial)->uart_irq_n);
 
@@ -723,6 +742,15 @@ static rt_err_t nu_uart_control(struct rt_serial_device *serial, int cmd, void *
 
         break;
 
+		case 9453:
+		{
+			  struct serial_configure* psUartConfig = (struct serial_configure*)arg;
+
+			  /* Set line configuration. */
+				result = nu_uart_resetline(serial, psUartConfig);
+		}
+		break;
+				
     default:
         result = -RT_EINVAL;
         break;
