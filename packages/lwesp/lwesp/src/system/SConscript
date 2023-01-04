@@ -1,0 +1,14 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+src = Split("""
+lwesp_ll_rtthread.c
+lwesp_mem_rtthread.c
+lwesp_sys_rtthread.c
+""")
+
+CPPPATH = [cwd]
+group = DefineGroup('lwesp', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

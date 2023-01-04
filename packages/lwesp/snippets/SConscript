@@ -1,0 +1,15 @@
+from building import *
+import os
+
+cwd = GetCurrentDir() + '/include'
+src = Split("""
+station_manager.c
+dns.c
+http_server.c
+netconn_server.c
+""")
+
+CPPPATH = [cwd]
+group = DefineGroup('lwesp', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

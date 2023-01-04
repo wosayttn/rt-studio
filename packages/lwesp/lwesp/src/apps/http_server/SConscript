@@ -1,0 +1,13 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+src = Split("""
+lwesp_http_server.c
+lwesp_http_server_fs.c
+""")
+
+CPPPATH = [cwd]
+group = DefineGroup('lwesp', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
