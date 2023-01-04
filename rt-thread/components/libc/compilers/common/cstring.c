@@ -19,24 +19,24 @@
  *
  * @note  The bzero() function is deprecated (marked as LEGACY in POSIX. 1-2001).
  */
-void bzero(void* s, size_t n)
+void bzero(void *s, size_t n)
 {
     rt_memset(s, 0, n);
 }
 
-void bcopy(const void* src, void* dest, size_t n)
+void bcopy(const void *src, void *dest, size_t n)
 {
     rt_memcpy(dest, src, n);
 }
 
-int bcmp(const void* s1, const void* s2, size_t n)
+int bcmp(const void *s1, const void *s2, size_t n)
 {
     return rt_memcmp(s1, s2, n);
 }
 
-void explicit_bzero(void* s, size_t n)
+void explicit_bzero(void *s, size_t n)
 {
-    volatile char* vs = (volatile char*)s;
+    volatile char *vs = (volatile char *)s;
     while (n)
     {
         *vs++ = 0;
@@ -44,12 +44,12 @@ void explicit_bzero(void* s, size_t n)
     }
 }
 
-char* index(const char* s, int c)
+char *index(const char *s, int c)
 {
     return strchr(s, c);
 }
 
-char* rindex(const char* s, int c)
+char *rindex(const char *s, int c)
 {
     return strrchr(s, c);
 }
@@ -97,9 +97,9 @@ int ffsll(long long i)
  *
  * @note  This function is GNU extension, available since glibc 2.1.91.
  */
-void* memrchr(const void* ptr, int ch, size_t pos)
+void *memrchr(const void *ptr, int ch, size_t pos)
 {
-    char* end = (char*)ptr + pos - 1;
+    char *end = (char *)ptr + pos - 1;
     while (end != ptr)
     {
         if (*end == ch)
@@ -116,17 +116,17 @@ size_t strnlen(const char *s, size_t maxlen)
     return sc - s;
 }
 
-char* strchrnul(const char* s, int c)
+char *strchrnul(const char *s, int c)
 {
     while (*s != '\0' && *s != c)
         s++;
-    return (char*)s;
+    return (char *)s;
 }
 
-int strcasecmp(const char* s1, const char* s2)
+int strcasecmp(const char *s1, const char *s2)
 {
-    const unsigned char* u1 = (const unsigned char*)s1;
-    const unsigned char* u2 = (const unsigned char*)s2;
+    const unsigned char *u1 = (const unsigned char *)s1;
+    const unsigned char *u2 = (const unsigned char *)s2;
     int result;
 
     while ((result = tolower(*u1) - tolower(*u2)) == 0 && *u1 != 0)
@@ -138,10 +138,10 @@ int strcasecmp(const char* s1, const char* s2)
     return result;
 }
 
-int strncasecmp(const char* s1, const char* s2, size_t n)
+int strncasecmp(const char *s1, const char *s2, size_t n)
 {
-    const unsigned char* u1 = (const unsigned char*)s1;
-    const unsigned char* u2 = (const unsigned char*)s2;
+    const unsigned char *u1 = (const unsigned char *)s1;
+    const unsigned char *u2 = (const unsigned char *)s2;
     int result;
 
     for (; n != 0; n--)
@@ -182,7 +182,7 @@ char *strndup(const char *s, size_t size)
     return news;
 }
 
-char *strtok_r(char *str, const char *delim, char **saveptr)
+RT_WEAK char *strtok_r(char *str, const char *delim, char **saveptr)
 {
     char *pbegin;
     char *pend = NULL;
@@ -200,7 +200,7 @@ char *strtok_r(char *str, const char *delim, char **saveptr)
         return NULL;
     }
 
-    for (;*pbegin && strchr(delim, *pbegin) != NULL; pbegin++);
+    for (; *pbegin && strchr(delim, *pbegin) != NULL; pbegin++);
 
     if (!*pbegin)
     {
