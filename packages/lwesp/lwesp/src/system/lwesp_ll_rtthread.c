@@ -12,24 +12,13 @@
 
 #if !__DOXYGEN__
 
-#if !LWESP_CFG_INPUT_USE_PROCESS
-    #error "LWESP_CFG_INPUT_USE_PROCESS must be enabled in `lwesp_config.h` to use this driver."
-#endif /* LWESP_CFG_INPUT_USE_PROCESS */
-
-#if !defined(LWESP_USART_DMA_RX_BUFF_SIZE)
-    #define LWESP_USART_DMA_RX_BUFF_SIZE 0x1000
+#if !defined(LWESP_UART_DMA_RX_BUFF_SIZE)
+    #define LWESP_UART_DMA_RX_BUFF_SIZE 0x800
 #endif /* !defined(LWESP_USART_DMA_RX_BUFF_SIZE) */
 
-#if !defined(LWESP_MEM_SIZE)
-    #define LWESP_MEM_SIZE 0x1000
-#endif /* !defined(LWESP_MEM_SIZE) */
-
-#if !defined(LWESP_USART_RDR_NAME)
-    #define LWESP_USART_RDR_NAME RDR
-#endif /* !defined(LWESP_USART_RDR_NAME) */
 
 /* USART memory */
-static uint8_t uart_mem[LWESP_USART_DMA_RX_BUFF_SIZE];
+static uint8_t uart_mem[LWESP_UART_DMA_RX_BUFF_SIZE];
 static uint8_t is_running, initialized;
 static size_t old_pos;
 
@@ -41,93 +30,71 @@ static rt_device_t serial = RT_NULL;
 static lwesp_sys_thread_t s_sys_thread_serial;
 
 /* Message queue */
-static lwesp_sys_mbox_t s_sys_mbox_rx = RT_NULL;
-static char msg_pool[256];
+static rt_mq_t s_sys_mbox_rx = RT_NULL;
 
 struct msg_serial_rx
 {
     rt_device_t dev;
     rt_size_t size;
 };
-typedef struct msg_serial_rx* msg_serial_rx_t;
+typedef struct msg_serial_rx *msg_serial_rx_t;
 
 static rt_err_t serial_rx_done(rt_device_t dev, rt_size_t size)
 {
-		msg_serial_rx_t msg = RT_NULL;
+    if (size > 0)
+    {
+        rt_err_t result;
+        struct msg_serial_rx msg;
 
-  	if ( size > 0 ) 
-		{
-			rt_err_t result;
+        msg.dev = dev;
+        msg.size = size;
 
-		
-			msg = rt_malloc(sizeof(struct msg_serial_rx));
-			if (!msg)
-				goto fail_serial_rx_done;
-
-			msg->dev = dev;
-			msg->size = size;
-
-			if ( !s_sys_mbox_rx || lwesp_sys_mbox_put(&s_sys_mbox_rx, msg) == LWESP_SYS_TIMEOUT)
-			{
-					rt_kprintf("message queue full!\n");
-					goto fail_serial_rx_done;
-			}
-		}
+        if (!s_sys_mbox_rx || (rt_mq_send(s_sys_mbox_rx, &msg, sizeof(struct msg_serial_rx)) == LWESP_SYS_TIMEOUT))
+        {
+            rt_kprintf("message queue full!\n");
+            goto fail_serial_rx_done;
+        }
+    }
 
     return RT_EOK;
 
 fail_serial_rx_done:
 
-		if (msg)
-			rt_free(msg);
-
     return -RT_ERROR;
 }
 
 /**
- * \brief           USART data processing
+ * \brief           UART data processing
  */
 static void
 lwesp_serial_ll_worker(void *arg)
 {
-		msg_serial_rx_t msg;
+    struct msg_serial_rx msg;
     rt_uint32_t rx_length;
 
     while (1)
     {
-			  msg = RT_NULL;
-
-        if ( s_sys_mbox_rx && (lwesp_sys_mbox_get(&s_sys_mbox_rx, (void *)&msg, LWESP_SYS_TIMEOUT) != LWESP_SYS_TIMEOUT) )
+        if (s_sys_mbox_rx && (rt_mq_recv(s_sys_mbox_rx, (void *)&msg, sizeof(struct msg_serial_rx), RT_WAITING_FOREVER) == RT_EOK))
         {
-            rx_length = rt_device_read(msg->dev, 0, uart_mem, msg->size);
-            lwesp_input_process(&uart_mem[0], rx_length);
+            rx_length = rt_device_read(msg.dev, 0, uart_mem, msg.size);
+            if (rx_length > 0)
+                lwesp_input_process(&uart_mem[0], rx_length);
         }
-				
-				if (msg)
-				{
-					  rt_free(msg);
-				}
     }
 }
 
-/**
- * \brief           Configure UART using DMA for receive in double buffer mode and IDLE line detection
- */
 static struct serial_configure sUartConfig  = RT_SERIAL_CONFIG_DEFAULT;;
 uint8_t lwesp_serial_change_baudrate(uint32_t baudrate)
 {
     sUartConfig.baud_rate = baudrate;
-    if ((serial = rt_device_find(LWESP_DEVNAME)) == RT_NULL)
+    if (!serial || (rt_device_control(serial, 9453, &sUartConfig) != RT_EOK))
         goto exit_lwesp_serial_change_baudrate;
 
-    if (rt_device_control(serial, 9453, &sUartConfig) != RT_EOK)
-        goto exit_lwesp_serial_change_baudrate;
+    return 1;
 
-		return 1;
-    
 exit_lwesp_serial_change_baudrate:
 
-		return 0;
+    return 0;
 }
 
 static uint8_t
@@ -154,14 +121,15 @@ lwesp_serial_init(uint32_t baudrate)
     /* Set rx indicate function */
     rt_device_set_rx_indicate(serial, serial_rx_done);
 
-    if (!lwesp_sys_mbox_create(&s_sys_mbox_rx, 256))
+    s_sys_mbox_rx = rt_mq_create("lwesprx", 512, sizeof(struct msg_serial_rx), RT_IPC_FLAG_FIFO);
+    if (!s_sys_mbox_rx)
         goto exit_lwesp_serial_init;
 
     if (!lwesp_sys_thread_create(&s_sys_thread_serial,
                                  "lwuart",
                                  lwesp_serial_ll_worker,
                                  RT_NULL,
-                                 LWESP_SYS_THREAD_SS,
+                                 2 * LWESP_SYS_THREAD_SS,
                                  LWESP_SYS_THREAD_PRIO))
         goto exit_lwesp_serial_init;
 
@@ -179,9 +147,6 @@ exit_lwesp_serial_init:
     return 0;
 }
 
-/**
- * \brief           Hardware reset callback
- */
 static uint8_t
 prv_reset_device(uint8_t state)
 {
@@ -190,9 +155,8 @@ prv_reset_device(uint8_t state)
 
     rt_pin_write(esp_rst_pin, state);
 
-	
-	  rt_kprintf("%s\n", __func__);
-	
+    rt_kprintf("%s: %d\n", __func__, state);
+
     return 0;
 }
 
@@ -207,7 +171,7 @@ prv_send_data(const void *data, size_t len)
 {
     size_t ret = 0;
 
-    if (len && rt_device_write(serial, 0, data, len) == len)
+    if (len && (rt_device_write(serial, 0, data, len) == len))
         ret = len;
 
     return ret;
@@ -221,7 +185,6 @@ lwesp_ll_init(lwesp_ll_t *ll)
 {
     rt_err_t ret;
     rt_base_t esp_rst_pin, esp_fwupdate_pin;
-
 
     if (initialized)
         return 1;
@@ -239,12 +202,8 @@ lwesp_ll_init(lwesp_ll_t *ll)
 
     /* ESP8266 reset pin PC.13 */
     rt_pin_mode(esp_rst_pin, PIN_MODE_OUTPUT);
-    rt_pin_write(esp_rst_pin, 1);
-    lwesp_delay(10);     /* Wait some time */
-    rt_pin_write(esp_rst_pin, 0);
-    lwesp_delay(100);    /* Wait some time */
-    rt_pin_write(esp_rst_pin, 1);
-		
+    rt_pin_write(esp_rst_pin, 0); // Reset
+
     if (!initialized)
     {
         ll->send_fn = prv_send_data; /* Set callback function to send data */

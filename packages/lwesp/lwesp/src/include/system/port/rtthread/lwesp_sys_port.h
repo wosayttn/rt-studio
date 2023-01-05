@@ -55,7 +55,7 @@ typedef rt_base_t         lwesp_sys_thread_prio_t;
 #define LWESP_SYS_MBOX_NULL   (RT_NULL)
 #define LWESP_SYS_TIMEOUT     (RT_WAITING_FOREVER)
 #define LWESP_SYS_THREAD_PRIO (10)
-#define LWESP_SYS_THREAD_SS   (4096)
+#define LWESP_SYS_THREAD_SS   (1024)
 
 #endif /* LWESP_CFG_OS && !__DOXYGEN__ */
 

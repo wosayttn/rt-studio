@@ -20,11 +20,10 @@
 int main(int argc, char **argv)
 {
 #if defined(RT_USING_PIN)
-    int counter = 100;
     /* set LEDR pin mode to output */
     rt_pin_mode(LEDR, PIN_MODE_OUTPUT);
 
-    while (counter--)
+    while (1)
     {
         rt_pin_write(LEDR, PIN_HIGH);
         rt_thread_mdelay(500);
@@ -32,5 +31,6 @@ int main(int argc, char **argv)
         rt_thread_mdelay(500);
     }
 #endif
+
     return 0;
 }

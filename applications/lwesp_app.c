@@ -145,20 +145,17 @@ static void lwesp_snftp_cbf(lwespr_t res, void *arg)
     {
         time_t timestamp;
         lwesp_datetime_t *dt = (lwesp_datetime_t *)arg;
-			
+
         RT_ASSERT(dt);
 
         set_date((rt_uint32_t)dt->year, (rt_uint32_t)dt->month, (rt_uint32_t)dt->date);
         set_time((rt_uint32_t)dt->hours, (rt_uint32_t)dt->minutes, (rt_uint32_t)dt->seconds);
         get_timestamp(&timestamp);
 
-        if (timestamp > 1000)
-        {
-					   utils_printf("SYSTIME: %d, SNTP: %02d-%02d-%02d %02d:%02d:%02d\n",
-                   (rt_uint32_t)timestamp,
-                   (rt_uint32_t)dt->year, (rt_uint32_t)dt->month, (rt_uint32_t)dt->date,
-                   (rt_uint32_t)dt->hours, (rt_uint32_t)dt->minutes, (rt_uint32_t)dt->seconds);
-        }
+        utils_printf("SYSTIME: %d, SNTP: %02d-%02d-%02d %02d:%02d:%02d\n",
+                     (rt_uint32_t)timestamp,
+                     (rt_uint32_t)dt->year, (rt_uint32_t)dt->month, (rt_uint32_t)dt->date,
+                     (rt_uint32_t)dt->hours, (rt_uint32_t)dt->minutes, (rt_uint32_t)dt->seconds);
     }
     break;
 
@@ -184,29 +181,29 @@ static void lwesp_netif_worker(void *pvParameter)
 
 
 #if 1
-		#define DEF_SPEED_UP	(LWESP_CFG_AT_PORT_BAUDRATE * 4)
-		/* Set baudrate to DEF_SPEED_UP and enable flow-control function. */
-		if ( lwesp_set_at_baudrate(DEF_SPEED_UP, NULL, NULL, 1)  != lwespOK ) 
-		{
-			utils_printf("Cannot set baudrate to %d!\r\n", DEF_SPEED_UP);
-			goto exit_lwesp_netif_worker;
-		}
-		else
-		{
-			  /* re-configuration UART baudrate. */
-				extern uint8_t lwesp_serial_change_baudrate(uint32_t baudrate);
-			  if (lwesp_serial_change_baudrate(DEF_SPEED_UP))
-				{
-					utils_printf("Reset baudrate to %d!\r\n", DEF_SPEED_UP);				
-				}
-				else
-				{
-					utils_printf("Cannot reset baudrate to %d!\r\n", DEF_SPEED_UP);
-					goto exit_lwesp_netif_worker;
-				}					
-		}
-#endif		
-		
+#define DEF_SPEED_UP    (LWESP_CFG_AT_PORT_BAUDRATE * 4)
+    /* Set baudrate to DEF_SPEED_UP and enable flow-control function. */
+    if (lwesp_set_at_baudrate(DEF_SPEED_UP, NULL, NULL, 1)  != lwespOK)
+    {
+        utils_printf("Cannot set baudrate to %d!\r\n", DEF_SPEED_UP);
+        goto exit_lwesp_netif_worker;
+    }
+    else
+    {
+        /* re-configuration UART baudrate. */
+        extern uint8_t lwesp_serial_change_baudrate(uint32_t baudrate);
+        if (lwesp_serial_change_baudrate(DEF_SPEED_UP))
+        {
+            utils_printf("Reset baudrate to %d bsp.\r\n", DEF_SPEED_UP);
+        }
+        else
+        {
+            utils_printf("Cannot reset baudrate to %d!\r\n", DEF_SPEED_UP);
+            goto exit_lwesp_netif_worker;
+        }
+    }
+#endif
+
     if ((res = lwesp_ap_getmac(&ap_mac, RT_NULL, RT_NULL, 1)) == lwespOK)
     {
         utils_print_mac("SofAP MAC address: ", &ap_mac, "\r\n");
@@ -264,8 +261,8 @@ static void lwesp_netif_worker(void *pvParameter)
     res = lwesp_mdns_set_config(1, szTMP, "_"DEF_PRODUCT, 80, RT_NULL, RT_NULL, 1);
     if (res == lwespOK)
     {
-        utils_printf("mdns configured! mdns: %s.local\r\n", szTMP);
-        utils_printf("## You can execute 'ping %s.local' using window command-line.\r\n", szTMP);
+        utils_printf("mdns configured!\n");
+        utils_printf("## mdns: %s.local\n", szTMP);
     }
     else
     {
@@ -274,7 +271,7 @@ static void lwesp_netif_worker(void *pvParameter)
 
     /* The rest is handled in event function */
     /* Create server thread */
-    lwesp_sys_thread_create(RT_NULL, "ncsvr", (lwesp_sys_thread_fn)netconn_server_thread, RT_NULL, LWESP_SYS_THREAD_SS, 0);
+    lwesp_sys_thread_create(RT_NULL, "ncsvr", (lwesp_sys_thread_fn)netconn_server_thread, RT_NULL, 2 * LWESP_SYS_THREAD_SS, 0);
 
     /*
      * Do not stop program here.
@@ -302,7 +299,7 @@ int lwesp_worker_init(void)
                             "lwapp",
                             lwesp_netif_worker,
                             RT_NULL,
-                            LWESP_SYS_THREAD_SS,
+                            2 * LWESP_SYS_THREAD_SS,
                             LWESP_SYS_THREAD_PRIO);
 
 #if defined(RT_USING_RTC) && defined(RT_USING_ALARM)
