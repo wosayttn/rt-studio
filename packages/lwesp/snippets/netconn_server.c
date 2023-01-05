@@ -200,8 +200,8 @@ netconn_server_processing_thread(void *const arg)
                     //printf("Main page request\r\n");
                     now = lwesp_sys_now();      /* Get current time */
                     get_timestamp(&timestamp);
-                    snprintf(strt, sizeof(strt), "%u ms; %d secs, system time: %d secs", (unsigned)now, (unsigned)(now / 1000), (uint32_t)timestamp);
                     lwesp_netconn_write(client, rlwesp_data_mainpage_top, sizeof(rlwesp_data_mainpage_top) - 1);
+                    snprintf(strt, sizeof(strt), "%u ms; %d secs, %d secs", (unsigned)now, (unsigned)(now / 1000), (uint32_t)timestamp);
                     lwesp_netconn_write(client, strt, strlen(strt));
                     lwesp_netconn_write(client, rlwesp_data_mainpage_bottom, sizeof(rlwesp_data_mainpage_bottom) - 1);
                 }
