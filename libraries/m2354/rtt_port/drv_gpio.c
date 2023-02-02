@@ -50,7 +50,7 @@ static struct rt_pin_ops nu_gpio_ops =
     nu_gpio_pin_get,
 };
 
-static IRQn_Type au32GPIRQ[NU_PORT_CNT] = {GPA_IRQn, GPB_IRQn, GPC_IRQn, GPD_IRQn, GPE_IRQn, GPF_IRQn, GPG_IRQn, GPH_IRQn};
+static const IRQn_Type au32GPIRQ[NU_PORT_CNT] = {GPA_IRQn, GPB_IRQn, GPC_IRQn, GPD_IRQn, GPE_IRQn, GPF_IRQn, GPG_IRQn, GPH_IRQn};
 
 static rt_uint32_t g_u32PinIrqMask = 0x0;
 

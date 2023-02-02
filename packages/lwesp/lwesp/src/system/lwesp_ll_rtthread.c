@@ -13,7 +13,7 @@
 #if !__DOXYGEN__
 
 #if !defined(LWESP_UART_DMA_RX_BUFF_SIZE)
-    #define LWESP_UART_DMA_RX_BUFF_SIZE 0x800
+    #define LWESP_UART_DMA_RX_BUFF_SIZE 0x400
 #endif /* !defined(LWESP_USART_DMA_RX_BUFF_SIZE) */
 
 

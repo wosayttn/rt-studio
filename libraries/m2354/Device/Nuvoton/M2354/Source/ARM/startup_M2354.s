@@ -20,7 +20,7 @@
 ; </h>
 
     IF :LNOT: :DEF: Stack_Size
-Stack_Size      EQU     0x00002000
+Stack_Size      EQU     0x00000200
     ENDIF
 
                 AREA    |.STACK|, NOINIT, READWRITE, ALIGN=3
@@ -33,7 +33,7 @@ __initial_sp
 ; </h>
 
     IF :LNOT: :DEF: Heap_Size
-Heap_Size       EQU     0x00001000
+Heap_Size       EQU     0x00000200
     ENDIF
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3

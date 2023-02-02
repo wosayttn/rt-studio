@@ -60,7 +60,7 @@ static const ap_entry_t ap_list_preferred[] =
     { .ssid = "NT_ZY_BUFFALO", .pass = "12345678" },
     //{ .ssid = "Kaja", .pass = "ginkaja2021" },
 };
-static lwesp_ap_t ap_list_scanned[100];         /* Scanned access points information */
+static lwesp_ap_t ap_list_scanned[8];         /* Scanned access points information */
 static size_t ap_list_scanned_len = 0;          /* Number of scanned access points */
 static prv_ap_data_t ap_async_data;             /* Asynchronous data structure */
 

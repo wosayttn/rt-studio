@@ -14,18 +14,18 @@
 #define __BOARD_H__
 
 // <o> Internal SRAM memory size[Kbytes] <8-64>
-#define SRAM_SIZE         (256)
+#define SRAM_SIZE         (32)
 #define SRAM_END          (0x20000000 + SRAM_SIZE * 1024)
 
 #if defined(__ARMCC_VERSION)
-extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define HEAP_BEGIN      ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
+    extern int Image$$RW_IRAM1$$ZI$$Limit;
+    #define HEAP_BEGIN      ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__
-#pragma section="CSTACK"
-#define HEAP_BEGIN      (__segment_end("CSTACK"))
+    #pragma section="CSTACK"
+    #define HEAP_BEGIN      (__segment_end("CSTACK"))
 #else
-extern int __bss_end;
-#define HEAP_BEGIN      ((void *)&__bss_end)
+    extern int __bss_end;
+    #define HEAP_BEGIN      ((void *)&__bss_end)
 #endif
 
 #define HEAP_END        (void *)SRAM_END
